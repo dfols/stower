@@ -13,6 +13,7 @@ print_border() {
     echo "$msg"
     echo "$border"
 }
+
 # Function to display the main banner
 display_banner() {
     cat <<"EOF"
@@ -67,6 +68,11 @@ process_package_section() {
         target_dir="$target_dir"
         files="$files"
         package_name="$package_name"
+
+        echo "Processing package: $package_name"
+        echo "Stow directory: $stow_dir"
+        echo "Target directory: $target_dir"
+        echo "Files: $files"
 
         move_files_to_package
 
@@ -218,7 +224,7 @@ move_files_to_package() {
     mkdir -p "$package_dir"
 
     # Split the files_to_stow string into an array
-    IFS=' ' read -r -a files_array <<<"$files_to_stow"
+    IFS=' ' read -r -a files_array <<<"$files"
 
     for file in "${files_array[@]}"; do
         # Expand tilde to home directory
@@ -252,6 +258,7 @@ run_stow_command() {
         }
     fi
 
+    echo "Running stow --dir=$stow_dir --target=$target_dir -S $package_name"
     stow --dir="$stow_dir" --target="$target_dir" -S "$package_name" || {
         echo "Error occurred while running stow for package: $package_name"
         exit 1
